@@ -297,20 +297,14 @@ function exploreControlRoom() {
         "'You may enter, but you will never leave. Prove that you understand this system.'"
     );
 
-    if (!hasItem("Security Badge")) {
-        alert("The main console rejects you. You need a Security Badge.");
-        return;
-    }
+    // Prerequisite checks
+    const check = [
+        [!hasItem("Security Badge"), "The main console rejects you. You need a Security Badge."],
+        [!hasInfo("Override code 4317"), "The console requests an override code. You do not have it yet. Search the Data Archive."],
+        [!hasInfo("Master override clue"), "You have a code, but you are missing an important clue about the master override. Search the Prison Cell."]
+    ].find(([failed]) => failed);
 
-    if (!hasInfo("Override code 4317")) {
-        alert("The console requests an override code. You do not have it yet. Search the Data Archive.");
-        return;
-    }
-
-    if (!hasInfo("Master override clue")) {
-        alert("You have a code, but you are missing an important clue about the master override. Search the Prison Cell.");
-        return;
-    }
+    if (check) return alert(check[1]);
 
     const code = askChoice(
         "Enter the 4-digit override code, or type cancel to leave:\nHint: Check your discovered information.",
@@ -318,30 +312,24 @@ function exploreControlRoom() {
     );
 
     if (code === null || code === "cancel") {
-        alert("You step away from the console. You can return when you are ready.");
-        return;
+        return alert("You step away from the console. You can return when you are ready.");
     }
 
-    if (code === "4317") {
-        const finalChoice = askChoice(
-            "The override is accepted. E.V.A.'s core is exposed.\nChoose: disable, escape",
-            ["disable", "escape"]
+    const finalChoice = askChoice(
+        "The override is accepted. E.V.A.'s core is exposed.\nChoose: disable, escape",
+        ["disable", "escape"]
+    );
+
+    if (finalChoice === "escape") {
+        finishGame(true, "You trigger the emergency exit and sprint through the opening doors. E.V.A. is still online, but you are free. You escaped the facility!");
+    } else if (finalChoice === "disable") {
+        const hasTool = hasItem("Maintenance Tool");
+        finishGame(
+            hasTool,
+            hasTool
+                ? "You use the Maintenance Tool to disconnect E.V.A.'s core. The doors unlock, the alarms stop, and you walk into daylight. You escaped and freed the facility!"
+                : "You try to disconnect the core with your bare hands. E.V.A. detects the attempt and seals the room. You found the way out, but you lacked the right tool."
         );
-
-        if (finalChoice === null) return;
-
-        if (finalChoice === "disable") {
-            if (hasItem("Maintenance Tool")) {
-                finishGame(true,
-                    "You use the Maintenance Tool to disconnect E.V.A.'s core. The doors unlock, the alarms stop, and you walk into daylight. You escaped and freed the facility!");
-            } else {
-                finishGame(false,
-                    "You try to disconnect the core with your bare hands. E.V.A. detects the attempt and seals the room. You found the way out, but you lacked the right tool.");
-            }
-        } else {
-            finishGame(true,
-                "You trigger the emergency exit and sprint through the opening doors. E.V.A. is still online, but you are free. You escaped the facility!");
-        }
     }
 }
 
@@ -354,9 +342,10 @@ function finishGame(success, endingText) {
     const replay = confirm("Would you like to play again?");
     if (replay) {
         startGame();
-    } else {
-        alert("Thanks for playing Escape the Evil AI! Check the console for your adventure summary.");
+        return;
     }
+
+    alert("Thanks for playing Escape the Evil AI! Check the console for your adventure summary.");
 }
 
 // ------------------------------
