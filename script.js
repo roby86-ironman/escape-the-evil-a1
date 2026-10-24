@@ -1,3 +1,4 @@
+// Escape the Evil AI - game logic and player interaction.
 "use strict";
 
 function normalizeAnswer(value) {
