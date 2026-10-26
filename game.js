@@ -1,5 +1,7 @@
 
+
 "use strict";
+
 
 
 const INITIAL_STATE = () => ({
@@ -12,7 +14,6 @@ const INITIAL_STATE = () => ({
 });
 
 let player = INITIAL_STATE();
-let replayRequested = false;
 
 const ROOMS = [
     "Prison Cell",
@@ -24,9 +25,9 @@ const ROOMS = [
 
 function normalizeInput(value) {
     if (value === null) return null;
-
     return value.trim().toLowerCase();
 }
+
 
 function askChoice(message, validChoices) {
     while (true) {
@@ -39,40 +40,43 @@ function askChoice(message, validChoices) {
             choice => choice.toLowerCase()
         );
 
-        if (normalizedChoices.includes(choice)) return choice;
+        if (normalizedChoices.includes(choice)) {
+            return choice;
+        }
 
         alert(
-            "⚠️ Invalid choice. Please try again!\n\n" +
-            "💡 Check the available options and try again.\n" +
-            "You can also press Cancel to return."
+            "❌ Invalid choice! Please try again.\n\n" +
+            "💡 Enter one of the available options, or press Cancel to return."
         );
     }
 }
 
+
 function log(message) {
-    console.log("[Escape the Evil AI] " + message);
+    console.log("🤖 [Escape the Evil AI] " + message);
 }
 
+
 function showStatus() {
-    console.log("----- PLAYER STATUS -----");
-    console.log("Current room:", player.currentRoom);
+    console.log("========== 🧑 PLAYER STATUS ==========");
+    console.log("📍 Current room:", player.currentRoom);
     console.log(
-        "Collected items:",
+        "🎒 Collected items:",
         player.items.length ? player.items.join(", ") : "None"
     );
     console.log(
-        "Discovered information:",
+        "🧠 Discovered information:",
         player.discoveredInfo.length
             ? player.discoveredInfo.join(", ")
             : "None"
     );
     console.log(
-        "Visited rooms:",
+        "🚪 Visited rooms:",
         player.visitedRooms.length
             ? player.visitedRooms.join(", ")
             : "None"
     );
-    console.log("-------------------------");
+    console.log("======================================");
 }
 
 
@@ -82,43 +86,31 @@ function addItem(itemName) {
             "🎒 You already collected " + itemName +
             ". It is safely in your inventory!"
         );
-
         return false;
     }
 
     player.items.push(itemName);
 
-    alert(
-        "🎉 Item collected: " + itemName + "!\n\n" +
-        "💡 This could be useful for your escape!"
-    );
+    alert("✅ Item collected: " + itemName + "!");
 
     log("Collected item: " + itemName);
-
     return true;
 }
 
 function addInfo(infoName) {
     if (player.discoveredInfo.includes(infoName)) {
-        alert(
-            "🧠 You already recorded this information.\n\n" +
-            "No need to write it down twice!"
-        );
-
+        alert("🧠 You already recorded this information!");
         return false;
     }
 
     player.discoveredInfo.push(infoName);
 
-    alert(
-        "🔎 Information discovered: " + infoName + "!\n\n" +
-        "📝 Remember this clue. It could save your life!"
-    );
+    alert("🔎 Information discovered: " + infoName + "!");
 
     log("Discovered information: " + infoName);
-
     return true;
 }
+
 
 function markAction(actionName) {
     if (!player.actionsCompleted.includes(actionName)) {
@@ -136,50 +128,36 @@ function hasInfo(infoName) {
 
 
 function showIntroduction() {
-
-    log("Mission started! 🤖 E.V.A. is watching you...");
-    log(
-        "Tip: You can revisit rooms. Your collected items " +
-        "and completed actions will be preserved."
-    );
+    log("🚨 Mission started!");
+    log("💡 Tip: You can revisit rooms. Collected items and completed actions are remembered.");
 }
 
 
 function showRoomMenu(roomName) {
     const options = {
         "Prison Cell":
-            "🤖 ESCAPE THE EVIL AI! 🔐\n\n" +
-            "You wake up inside a high-security facility " +
-            "controlled by E.V.A., an evil artificial intelligence.\n\n" +
-            "🚨 The doors are locked. The cameras are watching. " +
-            "E.V.A. knows you are trying to escape!\n\n" +
-            "🧭 Explore the facility, collect useful items, " +
-            "discover secrets, and reach the Control Room.\n\n" +
+            "🤖 ESCAPE THE EVIL AI!\n\n" +
+            "You wake up inside a high-security facility controlled by E.V.A., an evil artificial intelligence.\n" +
+            "The doors are locked, the cameras are watching, and E.V.A. knows you are trying to escape!\n\n" +
+            "📍 LOCATION: Prison Cell\n\n" +
             "Choose: explore, inventory, status, move, quit",
 
         "Laboratory":
-            "🧪 LABORATORY\n\n" +
-            "Broken machines, mysterious experiments, and a " +
-            "suspicious security badge...\n\n" +
-            "🤖 E.V.A. says: \"Please do not touch anything. " +
-            "Especially the things marked DO NOT TOUCH.\"\n\n" +
-            "💡 Something here might help you escape!\n\n" +
+            "🧪 LOCATION: Laboratory\n\n" +
+            "Broken equipment and strange experiments surround you.\n" +
+            "Maybe something here can help you escape... or explode. Hopefully the first option!\n\n" +
             "Choose: explore, inventory, status, move, quit",
 
         "Data Archive":
-            "💾 DATA ARCHIVE\n\n" +
-            "Thousands of files. Countless secrets. One very " +
-            "suspicious artificial intelligence.\n\n" +
-            "🔎 Can you find the override code?\n\n" +
-            "🤖 E.V.A. says: \"My files are perfectly secure. " +
-            "Probably. Maybe.\"\n\n" +
+            "💾 LOCATION: Data Archive\n\n" +
+            "Rows of servers contain secrets about E.V.A. and the facility.\n" +
+            "Time to do some digital detective work!\n\n" +
             "Choose: explore, inventory, status, move, quit",
 
         "Control Room":
-            "🚨 CONTROL ROOM\n\n" +
-            "Red lights flash. E.V.A. is waiting for you.\n\n" +
-            "🤖 E.V.A. says: \"You may enter, but will you ever leave?\"\n\n" +
-            "🧠 Check your inventory and clues before making a move!\n\n" +
+            "🚨 LOCATION: Control Room\n\n" +
+            "You are close to E.V.A.'s central system.\n" +
+            "One wrong move could ruin everything. No pressure!\n\n" +
             "Choose: explore, inventory, status, move, quit"
     };
 
@@ -189,8 +167,10 @@ function showRoomMenu(roomName) {
     );
 }
 
+
+
 function explorePrisonCell() {
-    log("Exploring the Prison Cell. 🔐");
+    log("🔎 Exploring the Prison Cell.");
 
     if (!player.visitedRooms.includes("Prison Cell")) {
         player.visitedRooms.push("Prison Cell");
@@ -198,14 +178,13 @@ function explorePrisonCell() {
 
     if (!player.actionsCompleted.includes("cell_explored")) {
         alert(
-            "🔐 You inspect the cold metal cell.\n\n" +
-            "🤔 Behind a loose panel, you notice a small " +
-            "maintenance tool.\n\n" +
-            "💡 Maybe this is your first step toward freedom!"
+            "🔒 The cell is cold and dark.\n\n" +
+            "You inspect the walls and discover a loose panel.\n" +
+            "Behind it, there is a small maintenance tool!"
         );
 
         const choice = askChoice(
-            "🛠️ Take the maintenance tool? (yes / no)",
+            "🛠️ Take the Maintenance Tool?\nChoose: yes, no",
             ["yes", "no"]
         );
 
@@ -213,21 +192,22 @@ function explorePrisonCell() {
 
         if (choice === "yes") {
             addItem("Maintenance Tool");
+        } else {
+            alert("You leave the tool where it is. It will be waiting for you!");
         }
 
         markAction("cell_explored");
     } else {
         alert(
-            "🔐 You have already searched the cell.\n\n" +
-            "The loose panel is empty now.\n" +
-            "🕵️ Nothing else to see here... for now."
+            "🔎 You have already searched the cell.\n" +
+            "The loose panel is empty now."
         );
     }
 
     const inspect = askChoice(
-        "⚠️ A warning is scratched into the wall:\n\n" +
+        "⚠️ You notice a warning scratched into the wall:\n\n" +
         "\"E.V.A. cannot open a door without the master override.\"\n\n" +
-        "📝 Record this clue? (yes / no)",
+        "🧠 Record this clue?\nChoose: yes, no",
         ["yes", "no"]
     );
 
@@ -235,12 +215,11 @@ function explorePrisonCell() {
         addInfo("Master override clue");
     }
 
-    log("Prison Cell exploration complete. 🔐");
+    log("✅ Prison Cell exploration complete.");
 }
 
-
 function exploreLaboratory() {
-    log("Exploring the Laboratory. 🧪");
+    log("🧪 Exploring the Laboratory.");
 
     if (!player.visitedRooms.includes("Laboratory")) {
         player.visitedRooms.push("Laboratory");
@@ -249,13 +228,12 @@ function exploreLaboratory() {
     if (!player.actionsCompleted.includes("lab_explored")) {
         alert(
             "🧪 The Laboratory is full of broken equipment.\n\n" +
-            "🪪 A security badge lies beside a damaged terminal.\n\n" +
-            "🤖 E.V.A. says: \"Please do not touch anything. " +
-            "Especially the things marked DO NOT TOUCH.\""
+            "Beside a damaged terminal, you spot a Security Badge.\n" +
+            "That could come in handy!"
         );
 
         const choice = askChoice(
-            "🪪 Take the security badge? (yes / no)",
+            "🪪 Take the Security Badge?\nChoose: yes, no",
             ["yes", "no"]
         );
 
@@ -263,11 +241,13 @@ function exploreLaboratory() {
 
         if (choice === "yes") {
             addItem("Security Badge");
+        } else {
+            alert("You leave the badge behind for now.");
         }
 
         const terminal = askChoice(
-            "💻 The terminal flickers.\n\n" +
-            "Try to read its emergency note? (yes / no)",
+            "💻 The terminal flickers back to life.\n\n" +
+            "Try to read its emergency note?\nChoose: yes, no",
             ["yes", "no"]
         );
 
@@ -275,27 +255,26 @@ function exploreLaboratory() {
             addInfo("Emergency note");
 
             alert(
-                "📄 The note says:\n\n" +
-                "\"The Control Room requires a security badge. " +
+                "📄 EMERGENCY NOTE:\n\n" +
+                "\"The Control Room requires a Security Badge.\n" +
                 "The override code is stored in the Data Archive.\"\n\n" +
-                "💡 Looks like you have a new destination!"
+                "🔎 Better keep that information in mind!"
             );
         }
 
         markAction("lab_explored");
     } else {
         alert(
-            "🧪 You have already searched the Laboratory.\n\n" +
-            "The equipment remains exactly as you left it.\n" +
-            "🤖 E.V.A. says: \"Still looking for something? Cute.\""
+            "🧪 You have already searched the Laboratory.\n" +
+            "The equipment remains exactly as you left it."
         );
     }
 
-    log("Laboratory exploration complete. 🧪");
+    log("✅ Laboratory exploration complete.");
 }
 
 function exploreDataArchive() {
-    log("Exploring the Data Archive. 💾");
+    log("💾 Exploring the Data Archive.");
 
     if (!player.visitedRooms.includes("Data Archive")) {
         player.visitedRooms.push("Data Archive");
@@ -303,10 +282,9 @@ function exploreDataArchive() {
 
     if (!player.actionsCompleted.includes("archive_explored")) {
         alert(
-            "💾 Rows of servers hum in the dark.\n\n" +
-            "🔎 One screen asks for an access method.\n\n" +
-            "🤖 E.V.A. whispers: \"My files are perfectly secure. " +
-            "You would need to be a genius to get in.\""
+            "💾 Rows of servers hum in the darkness.\n\n" +
+            "One terminal asks how you want to access the archive.\n" +
+            "Let's hope the computer likes your answer!"
         );
 
         const method = askChoice(
@@ -316,48 +294,44 @@ function exploreDataArchive() {
         );
 
         if (method === null || method === "leave") {
-            alert(
-                "🚶 You step away from the archive terminal.\n\n" +
-                "💡 You can always come back when you are ready."
-            );
-
+            alert("🚶 You step away from the archive terminal.");
             return;
         }
 
         if (method === "badge" && hasItem("Security Badge")) {
             alert(
-                "🪪 The badge unlocks a restricted file!\n\n" +
-                "🔓 You discover the override code: 4317."
+                "✅ The badge unlocks a restricted file!\n\n" +
+                "🔢 You discover the override code: 4317."
             );
 
             addInfo("Override code 4317");
+
         } else if (method === "tool" && hasItem("Maintenance Tool")) {
             alert(
-                "🛠️ You open a maintenance panel and find a backup note!\n\n" +
-                "🔓 It contains the override code: 4317."
+                "🛠️ You open a maintenance panel.\n\n" +
+                "📄 Inside, you find a backup note containing the override code: 4317."
             );
 
             addInfo("Override code 4317");
+
         } else {
             alert(
                 "⛔ ACCESS DENIED!\n\n" +
-                "You need a Security Badge or a Maintenance Tool.\n\n" +
-                "💡 You can return later with the right item."
+                "You need a Security Badge or a Maintenance Tool.\n" +
+                "Don't give up! You can return later."
             );
-
             return;
         }
 
         markAction("archive_explored");
     } else {
         alert(
-            "💾 You have already accessed the archive.\n\n" +
-            "The override information remains in your notes.\n" +
-            "🧠 Good thing you remembered to save it!"
+            "💾 You have already accessed the archive.\n" +
+            "The override information remains in your notes."
         );
     }
 
-    log("Data Archive exploration complete. 💾");
+    log("✅ Data Archive exploration complete.");
 }
 
 
@@ -380,11 +354,7 @@ function exploreCurrentRoom() {
             break;
 
         default:
-            alert(
-                "⚠️ You are in an unknown location.\n\n" +
-                "Returning to the Prison Cell."
-            );
-
+            alert("⚠️ Unknown location! Returning to the Prison Cell.");
             player.currentRoom = "Prison Cell";
     }
 }
@@ -392,12 +362,14 @@ function exploreCurrentRoom() {
 
 function moveToRoom() {
     const choice = askChoice(
-        "🧭 Where would you like to go?\n\n" +
+        "🚪 Where would you like to go?\n\n" +
         "Choose: cell, laboratory, archive, control, cancel",
         ["cell", "laboratory", "archive", "control", "cancel"]
     );
 
-    if (choice === null || choice === "cancel") return;
+    if (choice === null || choice === "cancel") {
+        return;
+    }
 
     const destinations = {
         "cell": "Prison Cell",
@@ -413,26 +385,26 @@ function moveToRoom() {
         !hasItem("Security Badge")
     ) {
         alert(
-            "🔒 ACCESS DENIED!\n\n" +
-            "The Control Room door requires a Security Badge.\n\n" +
-            "🧪 Explore the Laboratory first!"
+            "🔒 The Control Room door is locked!\n\n" +
+            "🪪 You need a Security Badge. Explore the Laboratory first."
         );
-
         return;
     }
 
     player.currentRoom = destination;
 
-    log("Moved to " + destination + ".");
+    log("🚪 Moved to " + destination + ".");
 
     alert(
-        "🚪 You enter: " + destination + ".\n\n" +
-        "👀 Stay alert. E.V.A. could be watching!"
+        "🚶 You enter: " + destination + ".\n\n" +
+        "Stay alert! E.V.A. may be watching..."
     );
 }
 
+
+
 function exploreControlRoom() {
-    log("Entering the Control Room. 🚨");
+    log("🚨 Entering the Control Room.");
 
     if (!player.visitedRooms.includes("Control Room")) {
         player.visitedRooms.push("Control Room");
@@ -440,90 +412,90 @@ function exploreControlRoom() {
 
     alert(
         "🚨 The Control Room glows with red warning lights.\n\n" +
-        "🤖 E.V.A. speaks through the speakers:\n\n" +
+        "A voice comes from the speakers:\n\n" +
         "\"You may enter, but you will never leave. " +
-        "Prove that you understand this system.\""
+        "Prove that you understand this system.\"\n\n" +
+        "🤖 E.V.A. is waiting for your next move!"
     );
 
     if (!hasItem("Security Badge")) {
         alert(
-            "⛔ The main console rejects you.\n\n" +
-            "You need a Security Badge.\n" +
-            "💡 Search the Laboratory!"
+            "⛔ The main console rejects you.\n" +
+            "You need a Security Badge."
         );
-
         return;
     }
 
     if (!hasInfo("Override code 4317")) {
         alert(
-            "🔐 The console requests an override code.\n\n" +
-            "You do not have it yet.\n" +
-            "💾 Search the Data Archive."
+            "🔢 The console requests an override code.\n\n" +
+            "You do not have it yet. Search the Data Archive!"
         );
-
         return;
     }
 
     if (!hasInfo("Master override clue")) {
         alert(
-            "🧩 You have a code, but you are missing an important clue.\n\n" +
-            "Search the Prison Cell for the master override clue."
+            "🧠 You have the code, but you are missing an important clue.\n\n" +
+            "Search the Prison Cell for information about the master override."
         );
-
         return;
     }
 
     const code = askChoice(
-        "💻 Enter the 4-digit override code, or type cancel to leave.\n\n" +
-        "💡 Hint: Check your discovered information.",
+        "🔐 Enter the 4-digit override code.\n\n" +
+        "💡 Hint: Check your discovered information.\n" +
+        "Type the code, or type cancel to leave.",
         ["4317", "cancel"]
     );
 
     if (code === null || code === "cancel") {
         alert(
-            "🚶 You step away from the console.\n\n" +
+            "🚶 You step away from the console.\n" +
             "You can return when you are ready."
         );
-
         return;
     }
 
     if (code === "4317") {
+        alert(
+            "✅ OVERRIDE ACCEPTED!\n\n" +
+            "The security systems begin to shut down.\n" +
+            "E.V.A.'s core is exposed. This is your chance!"
+        );
+
         const finalChoice = askChoice(
-            "🎉 THE OVERRIDE IS ACCEPTED!\n\n" +
-            "E.V.A.'s core is exposed.\n\n" +
-            "🤖 E.V.A.: \"This is not happening. " +
-            "I demand a software update!\"\n\n" +
-            "Choose your final action: disable, escape",
+            "⚡ What will you do?\n\n" +
+            "Choose: disable, escape",
             ["disable", "escape"]
         );
 
-        if (finalChoice === null) return;
+        if (finalChoice === null) {
+            return;
+        }
 
         if (finalChoice === "disable") {
             if (hasItem("Maintenance Tool")) {
                 finishGame(
                     true,
-                    "🛠️ You use the Maintenance Tool to disconnect " +
-                    "E.V.A.'s core. The doors unlock, the alarms stop, " +
-                    "and you walk into daylight. You escaped and freed " +
-                    "the facility!"
+                    "🛠️ You use the Maintenance Tool to disconnect E.V.A.'s core. " +
+                    "The doors unlock, the alarms stop, and you walk into daylight.\n\n" +
+                    "🎉 You escaped and freed the facility!"
                 );
             } else {
                 finishGame(
                     false,
-                    "🤖 You try to disconnect the core with your bare hands. " +
-                    "E.V.A. detects the attempt and seals the room. " +
-                    "You found the way out, but you lacked the right tool."
+                    "😱 You try to disconnect the core with your bare hands. " +
+                    "E.V.A. detects the attempt and seals the room.\n\n" +
+                    "You found the way out, but you lacked the right tool!"
                 );
             }
         } else {
             finishGame(
                 true,
-                "🏃 You trigger the emergency exit and sprint through " +
-                "the opening doors. E.V.A. is still online, but you are free. " +
-                "You escaped the facility!"
+                "🏃 You trigger the emergency exit and sprint through the opening doors!\n\n" +
+                "E.V.A. is still online, but you are free.\n" +
+                "🎉 You escaped the facility!"
             );
         }
     }
@@ -547,27 +519,29 @@ function finishGame(success, endingText) {
 
     showStatus();
 
-    replayRequested = confirm(
+    const replay = confirm(
         "🔄 Would you like to play again?"
     );
 
-    if (!replayRequested) {
+    if (replay) {
+        startGame();
+    } else {
         alert(
             "👋 Thanks for playing Escape the Evil AI!\n\n" +
-            "🤖 E.V.A. says: \"I'll be waiting for your return.\"\n\n" +
             "Check the console for your adventure summary."
         );
     }
 }
 
 
+
 function showInventory() {
     alert(
         "🎒 INVENTORY\n\n" +
-        "Items: " +
+        "🛠️ Items: " +
         (player.items.length ? player.items.join(", ") : "None") +
         "\n\n" +
-        "🔎 Discovered information: " +
+        "🧠 Discovered information: " +
         (
             player.discoveredInfo.length
                 ? player.discoveredInfo.join(", ")
@@ -578,74 +552,70 @@ function showInventory() {
 
 
 function startGame() {
-    let playAgain = true;
+    player = INITIAL_STATE();
 
-    while (playAgain) {
-        replayRequested = false;
-        player = INITIAL_STATE();
+    console.clear();
 
-        console.clear();
+    log("🚀 A new game has started!");
+    showIntroduction();
 
-        log("A new game has started. 🚀");
+    while (!player.gameOver) {
+        const choice = showRoomMenu(player.currentRoom);
 
-        showIntroduction();
+    
+        if (choice === null) {
+            const quit = confirm(
+                "🚪 Do you want to leave the game?"
+            );
 
-        while (!player.gameOver) {
-            const choice = showRoomMenu(player.currentRoom);
+            if (quit) {
+                log("Player left the game.");
 
-            if (choice === null) {
-                const quit = confirm(
-                    "🚪 Do you want to leave the game?"
+                alert(
+                    "⏸️ Game paused.\n\n" +
+                    "Reload the page to start a new game."
                 );
 
-                if (quit) {
-                    log("Player left the game.");
-
-                    alert(
-                        "👋 Game ended.\n\n" +
-                        "Reload the page to start a new game."
-                    );
-
-                    return;
-                }
-
-                continue;
+                return;
             }
 
-            if (choice === "explore") {
-                exploreCurrentRoom();
-            } else if (choice === "inventory") {
-                showInventory();
-            } else if (choice === "status") {
-                showStatus();
-            } else if (choice === "move") {
-                moveToRoom();
-            } else if (choice === "quit") {
-                const quit = confirm(
-                    "⚠️ Are you sure you want to quit?"
-                );
-
-                if (quit) {
-                    log("Player quit the game.");
-
-                    alert(
-                        "👋 Thanks for playing!\n\n" +
-                        "Reload the page to play again."
-                    );
-
-                    return;
-                }
-            }
+            continue;
         }
 
-        playAgain = replayRequested;
+        if (choice === "explore") {
+            exploreCurrentRoom();
+
+        } else if (choice === "inventory") {
+            showInventory();
+
+        } else if (choice === "status") {
+            showStatus();
+
+        } else if (choice === "move") {
+            moveToRoom();
+
+        } else if (choice === "quit") {
+            const quit = confirm(
+                "❓ Are you sure you want to quit?"
+            );
+
+            if (quit) {
+                log("Player quit the game.");
+
+                alert(
+                    "👋 Thanks for playing!\n\n" +
+                    "Reload the page whenever you want to try again."
+                );
+
+                return;
+            }
+        }
     }
 }
 
 
-
 console.log("🤖 Escape the Evil AI is ready!");
-console.log("🎮 The game uses prompt(), alert(), confirm() and console output.");
-console.log("⌨️ Open the developer console with F12 to follow the adventure.");
+console.log("💡 The game uses prompt(), alert(), confirm() and console.");
+console.log("🚫 No DOM manipulation is used.");
 
 startGame();
