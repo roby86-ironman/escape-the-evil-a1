@@ -1,20 +1,7 @@
-/*
- * ESCAPE THE EVIL AI!
- * Team project
- *
- * Roberto Binetti: main structure, game loop, player state, validation, restart.
- * Siraj: rooms, exploration choices, item collection and revisiting rooms.
- * Jehosue: story, Control Room, endings and dialog-based user experience.
- *
- * The game intentionally uses prompt(), alert(), confirm() and console.
- * It does not use DOM manipulation.
- */
+
 
 "use strict";
 
-// ------------------------------
-// ROBERTO: shared game state
-// ------------------------------
 
 const INITIAL_STATE = () => ({
     currentRoom: "Prison Cell",
@@ -30,17 +17,13 @@ let player = INITIAL_STATE();
 const ROOMS = ["Prison Cell", "Laboratory", "Data Archive", "Control Room"];
 
 function normalizeInput(value) {
-    // Handles Cancel (null), capitalization and unnecessary spaces.
+
     if (value === null) return null;
     return value.trim().toLowerCase();
 }
 
 function askChoice(message, validChoices) {
-    /*
-     * Returns a normalized valid choice.
-     * Returns null if the player presses Cancel.
-     * Invalid choices do not advance the game.
-     */
+
     while (true) {
         const raw = prompt(message);
         const choice = normalizeInput(raw);
@@ -68,7 +51,7 @@ function showStatus() {
 }
 
 function addItem(itemName) {
-    // Items can only be collected once.
+
     if (player.items.includes(itemName)) {
         alert("You already collected " + itemName + ". It is safely in your inventory.");
         return false;
@@ -106,9 +89,6 @@ function hasInfo(infoName) {
     return player.discoveredInfo.includes(infoName);
 }
 
-// ------------------------------
-// JEHOSUE: story and introduction
-// ------------------------------
 
 function showIntroduction() {
     alert(
@@ -134,9 +114,6 @@ function showRoomMenu(roomName) {
     return askChoice(options[roomName], ["explore", "inventory", "status", "move", "quit"]);
 }
 
-// ------------------------------
-// SIRAJ: rooms and exploration
-// ------------------------------
 
 function explorePrisonCell() {
     log("Exploring the Prison Cell.");
@@ -281,9 +258,6 @@ function moveToRoom() {
     alert("You enter: " + destination + ".");
 }
 
-// ------------------------------
-// JEHOSUE: Control Room and endings
-// ------------------------------
 
 function exploreControlRoom() {
     log("Entering the Control Room.");
@@ -359,9 +333,6 @@ function finishGame(success, endingText) {
     }
 }
 
-// ------------------------------
-// ROBERTO: inventory, game loop, restart
-// ------------------------------
 
 function showInventory() {
     alert(
@@ -372,7 +343,7 @@ function showInventory() {
 }
 
 function startGame() {
-    // Restart always resets every part of the player's progress.
+   
     player = INITIAL_STATE();
 
     console.clear();
@@ -382,7 +353,7 @@ function startGame() {
     while (!player.gameOver) {
         const choice = showRoomMenu(player.currentRoom);
 
-        // Cancel from the room menu safely asks whether to exit.
+       
         if (choice === null) {
             const quit = confirm("Do you want to leave the game?");
             if (quit) {
@@ -412,6 +383,6 @@ function startGame() {
     }
 }
 
-// Helpful message shown in the console when the page loads.
+
 console.log("Escape the Evil AI is ready. Click 'Start / Restart Game' to begin.");
 console.log("The game uses prompt(), alert(), confirm() and console output; it does not manipulate the DOM.");
